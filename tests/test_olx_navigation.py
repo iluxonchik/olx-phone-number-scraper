@@ -64,5 +64,15 @@ class OLXListingActionsTestCase(unittest.TestCase):
         self.assertCountEqual(expected_listing_urls, obtained_listing_urls,
                               'Wrong listing urls parsed')
 
+    def test_next_page_present_TRUE(self):
+        olx = Olx(url='file://tests/resources/listings/listing_1_p_1.html')
+        self.assertIsNotNone(olx._get_next_page_if_present(),
+                              'Next page is present, but not marked as such')
+
+    def test_next_page_present_FALSE(self):
+        olx = Olx(url='file://tests/resources/listings/listing_1_p_2.html')
+        self.assertIsNone(olx._get_next_page_if_present(),
+                              'Next page is not present, but is marked as such')
+
     def test_all_listing_pages_are_read(self):
         pass
