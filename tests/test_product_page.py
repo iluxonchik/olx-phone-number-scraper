@@ -15,7 +15,7 @@ class ProductPageTestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def _setup_product(self, product_file_path, url = 'https://iluxonchik.github.io/'):
+    def _setup_product(self, product_file_path, url):
         product = None
         with open(product_file_path, mode='rb') as f:
             content = f.read()
@@ -25,7 +25,7 @@ class ProductPageTestCase(unittest.TestCase):
     def test_is_phone_number_present_TRUE(self):
         # test if a phone number is present on a page
         product_file_path = PRODUCTS_FILE_PATH_FMT.format('Y1')
-        product = self._setup_product(product_file_path)
+        product = self._setup_product(product_file_path, None)
         is_present = product.is_phone_number_present
         self.assertTrue(is_present, 'Phone number should be marked as present'
                         ' but is not')
@@ -33,7 +33,7 @@ class ProductPageTestCase(unittest.TestCase):
     def test_is_phone_number_present_FALSE(self):
         # test if a phone number is present on a page
         product_file_path = PRODUCTS_FILE_PATH_FMT.format('N1')
-        product = self._setup_product(product_file_path)
+        product = self._setup_product(product_file_path, None)
         is_present = product.is_phone_number_present
         self.assertFalse(is_present, 'Phone number should be marked as not'
                          ' present, but it is')
