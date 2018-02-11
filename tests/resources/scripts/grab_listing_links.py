@@ -24,10 +24,10 @@ with open(FILE_PATH, mode='r') as f:
     link_urls = []
 
     for match in matches:
-        link_urls += [match.group('listing_url')]
+        link_urls += ["'" + match.group('listing_url') + "'"]
 
     list_size = len(link_urls)
-    joined_urls = ', '.join(link_urls)
+    joined_urls = ', \n'.join(link_urls)
 
     str_list = '[{}]'.format(joined_urls)
     pyperclip.copy(str_list)
