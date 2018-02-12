@@ -8,8 +8,8 @@ class OlxNavigator(object):
     def __init__(self, listings_url, write_file_name = None, page_limit=None, number_limit=None):
         self._url = listings_url
         self._keep_scraping = True
-        self._page_limit = page_limit
-        self._number_limit = number_limit
+        self._PAGE_LIMIT = page_limit
+        self._PHONE_NUMBER_LIMIT = number_limit
 
         if write_file_name is not None:
             self._out_file = write_file_name
@@ -46,24 +46,42 @@ class OlxNavigator(object):
                 for listing_url in listing_urls:
                     html = self._requestor.get_html_from_url(listing_url)
                     product = Product(html, listing_url)
-                    if product.is_phone_number_present:
+                    if product.is_phone_number_present and self._keep_scraping:
                         phone_number_url = product.get_phone_number_url()
                         phone_number = product.get_phone_number(phone_number_url, listing_url)
 
                         self._write_phone_number_to_file(phone_number, out_file)
 
                         num_numbers_scraped += 1
-                        print('\nScraped phone number #{}:{}'.format(num_numbers_scraped, phone_number))
+                        print('\tScraped phone number #{}:{}'.format(num_numbers_scraped, phone_number))
+                        self._check_phone_number_limit(num_numbers_scraped)
 
                 next_page = olx.get_next_page_if_present()
                 num_pages_scraped += 1
+                self._check_page_number_limit(num_pages_scraped)
 
                 if next_page is None:
                     self._keep_scraping = False
-                    print('Reached last page')
+                    print('[DONE] Reached last page')
                 else:
                     self._url = next_page
 
     def _write_phone_number_to_file(self, phone_number, out_file):
         out_file.write('{}\n'.format(phone_number))
         out_file.flush()
+
+    def _check_phone_number_limit(self, num_numbers_scraped):
+        if self._PHONE_NUMBER_LIMIT is None:
+            return
+
+        if num_numbers_scraped >= self._PHONE_NUMBER_LIMIT:
+            print('[DONE] Stopping scraping due to phone number limit ({})'.format(self._PHONE_NUMBER_LIMIT))
+            self._keep_scraping = False
+
+    def _check_page_number_limit(self, num_pages_scraped):
+        if self._PAGE_LIMIT is None:
+            return
+
+        if num_pages_scraped >= self._PAGE_LIMIT:
+            print('[DONE] Stopping scraping due to page number limit ({})'.format(self._PAGE_LIMIT))
+            self._keep_scraping = False
