@@ -1,6 +1,7 @@
 """ requests.session wrapper for Olx scraping """
 
 import requests
+import random
 from olxscraper.decorators import singleton
 
 @singleton
@@ -11,7 +12,15 @@ class Requestor(object):
     automatic session resetting.
     """
 
-    def __init__(self, requests_per_session = 80):
+    USER_AGENTS = [
+                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+                    'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+                    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0',
+                    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+    ]
+
+    def __init__(self, requests_per_session = 85):
         self._REQUESTS_PER_SESSION = requests_per_session
         self._CURR_SESSION_REQUESTS = 0
 
@@ -20,11 +29,12 @@ class Requestor(object):
 
     def _init_session(self):
         self._session = requests.Session()
+        user_agent = random.choice(self.USER_AGENTS)
 
         # NOTE: referer header is required!
         # NOTE: the only required cookeis are: PHPSESSID and pt
         headers = {
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36",
+            "User-Agent": user_agent,
             "Accept": "*/*",
             "Accept-Encoding":"gzip, deflate, br",
             "X-Requested-With": "XMLHttpRequest"
