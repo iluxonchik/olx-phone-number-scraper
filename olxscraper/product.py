@@ -1,5 +1,5 @@
 import re
-from olxscraper.utils import get_html_from_url
+from olxscraper.requestor import Requestor
 from olxscraper.exceptions import (ListingIDNotFoundInURLException, PhoneTokenNotFoundException)
 import json
 
@@ -20,6 +20,8 @@ class Product(object):
     def __init__(self, content, url):
         self._content = content
         self._url = url
+
+        self._requestor = Requestor()
 
     @property
     def is_phone_number_present(self):
@@ -53,7 +55,7 @@ class Product(object):
         return phone_token
 
     def get_phone_number(self, phone_number_url, referer_header):
-        html = get_html_from_url(phone_number_url, referer_header)
+        html = self._requestor.get_html_from_url(phone_number_url, referer_header)
         response = json.loads(html)
         phone_number_raw = response['value']
         phone_number = phone_number_raw.replace(' ', '')

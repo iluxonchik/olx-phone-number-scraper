@@ -1,6 +1,6 @@
 import re
 from olxscraper.product import Product
-from olxscraper.utils import get_html_from_url
+from olxscraper.requestor import Requestor
 
 class OlxListings(object):
 
@@ -17,6 +17,8 @@ class OlxListings(object):
 
         self.link_pattern = re.compile(OlxListings.LINK_REGEX)
         self._next_page_link_pattern = re.compile(OlxListings.NEXT_PAGE_LINK_REGEX)
+
+        self._requestor = Requestor()
 
     def get_listing_urls_from_page(self):
         """
@@ -48,6 +50,6 @@ class OlxListings(object):
         if self._url_updated:
             return True
 
-        self._html = get_html_from_url(self._url)
+        self._html = self._requestor.get_html_from_url(self._url)
 
         self._url_updated = True

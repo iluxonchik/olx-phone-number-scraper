@@ -1,6 +1,6 @@
 from olxscraper.olx_listings import OlxListings
 from olxscraper.product import Product
-from olxscraper.utils import get_html_from_url
+from olxscraper.requestor import Requestor
 import time
 
 class OlxNavigator(object):
@@ -15,6 +15,8 @@ class OlxNavigator(object):
             self._out_file = write_file_name
         else:
             self._out_file = '{}.txt'.format(str(int(time.time())))
+
+        self._requestor = Requestor()
 
     def scrape_phone_numbers(self):
         """
@@ -42,7 +44,7 @@ class OlxNavigator(object):
 
                 listing_urls = olx.get_listing_urls_from_page()
                 for listing_url in listing_urls:
-                    html = get_html_from_url(listing_url)
+                    html = self._requestor.get_html_from_url(listing_url)
                     product = Product(html, listing_url)
                     if product.is_phone_number_present:
                         phone_number_url = product.get_phone_number_url()
