@@ -28,35 +28,40 @@ class OlxNavigator(object):
                         write phone_number to file
             go to next page
         """
+
         num_pages_scraped = 1
-        num_numbers_scraped = 1
+        num_numbers_scraped = 0
+
         print('Writing output to {}'.format(self._out_file))
-        while self._keep_scraping:
+        with open(self._out_file, mode='a') as out_file:
+            while self._keep_scraping:
 
-            olx = Olx(url=self._url)
+                olx = Olx(url=self._url)
 
-            print('Scraping page #{}.{}'.format(num_pages_scraped, self._url))
+                print('Scraping page #{}.{}'.format(num_pages_scraped, self._url))
 
-            listing_urls = olx.get_listing_urls_from_page()
-            for listing_url in listing_urls:
-                html = get_html_from_url(listing_url)
-                product = Product(html, listing_url)
-                if product.is_phone_number_present:
-                    phone_number_url = product.get_phone_number_url()
-                    phone_number = product.get_phone_number(phone_number_url, listing_url)
-                    self._write_phone_number_to_file(phone_number, self._out_file)
+                listing_urls = olx.get_listing_urls_from_page()
+                for listing_url in listing_urls:
+                    html = get_html_from_url(listing_url)
+                    product = Product(html, listing_url)
+                    if product.is_phone_number_present:
+                        phone_number_url = product.get_phone_number_url()
+                        phone_number = product.get_phone_number(phone_number_url, listing_url)
 
-                    print('Scraped phone number #{}:{}'.format(num_numbers_scraped, phone_number))
+                        self._write_phone_number_to_file(phone_number, out_file)
 
-            next_page = olx.get_next_page_if_present()
-            num_pages_scraped += 1
+                        num_numbers_scraped += 1
+                        print('\nScraped phone number #{}:{}'.format(num_numbers_scraped, phone_number))
 
-            if next_page is None:
-                self._keep_scraping = False
-                print('Reached last page')
-            else:
-                self._url = next_page
+                next_page = olx.get_next_page_if_present()
+                num_pages_scraped += 1
 
+                if next_page is None:
+                    self._keep_scraping = False
+                    print('Reached last page')
+                else:
+                    self._url = next_page
 
-    def _write_phone_number_to_file(self, phone_number, file_name):
-        print('Writing {} to {}...'.format(phone_number, file_name))
+    def _write_phone_number_to_file(self, phone_number, out_file):
+        out_file.write('{}\n'.format(phone_number))
+        out_file.flush()
