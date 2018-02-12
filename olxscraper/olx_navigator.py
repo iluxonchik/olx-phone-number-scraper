@@ -1,4 +1,4 @@
-from olxscraper.olx import Olx
+from olxscraper.olx_listings import OlxListings
 from olxscraper.product import Product
 from olxscraper.utils import get_html_from_url
 import time
@@ -36,7 +36,7 @@ class OlxNavigator(object):
         with open(self._out_file, mode='a') as out_file:
             while self._keep_scraping:
 
-                olx = Olx(url=self._url)
+                olx = OlxListings(url=self._url)
 
                 print('Scraping page #{}.{}'.format(num_pages_scraped, self._url))
 

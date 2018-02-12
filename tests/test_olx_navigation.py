@@ -1,6 +1,6 @@
 """ Test the navigation on an OLX listing page """
 
-from olxscraper.olx import Olx
+from olxscraper.olx_listings import OlxListings
 import unittest
 
 PRODUCTS_FILE_PATH_FMT = 'tests/resources/listings/listing_{}_p_{}.html'
@@ -16,7 +16,7 @@ class OLXListingActionsTestCase(unittest.TestCase):
 
     def test_all_listings_from_a_page(self):
         """ test that all listing urls from a page are obtained """
-        olx = Olx(url='file://tests/resources/listings/listing_1_p_1.html')
+        olx = OlxListings(url='file://tests/resources/listings/listing_1_p_1.html')
 
         expected_listing_urls = [
                                     'https://www.olx.pt/anuncio/iphone-6s-16gb-branco-desbloqueado-IDAYhGu.html#ca62d95960',
@@ -65,12 +65,12 @@ class OLXListingActionsTestCase(unittest.TestCase):
                               'Wrong listing urls parsed')
 
     def test_next_page_present_TRUE(self):
-        olx = Olx(url='file://tests/resources/listings/listing_1_p_1.html')
+        olx = OlxListings(url='file://tests/resources/listings/listing_1_p_1.html')
         self.assertIsNotNone(olx.get_next_page_if_present(),
                               'Next page is present, but not marked as such')
 
     def test_next_page_present_FALSE(self):
-        olx = Olx(url='file://tests/resources/listings/listing_1_p_2.html')
+        olx = OlxListings(url='file://tests/resources/listings/listing_1_p_2.html')
         self.assertIsNone(olx.get_next_page_if_present(),
                               'Next page is not present, but is marked as such')
 

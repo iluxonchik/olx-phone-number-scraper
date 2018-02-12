@@ -2,7 +2,7 @@ import re
 from olxscraper.product import Product
 from olxscraper.utils import get_html_from_url
 
-class Olx(object):
+class OlxListings(object):
 
     LINK_REGEX = r'detailsLink ( nophoto)?"(.|\n)*?href="(?P<listing_url>.+?)"'
     LINK_REGEX_WITH_PHOTOS_ONLY = r'detailsLink "(.|\n)*?href="(?P<listing_url>.+?)"'
@@ -15,8 +15,8 @@ class Olx(object):
         self._url_updated = False
         self._html = None
 
-        self.link_pattern = re.compile(Olx.LINK_REGEX)
-        self._next_page_link_pattern = re.compile(Olx.NEXT_PAGE_LINK_REGEX)
+        self.link_pattern = re.compile(OlxListings.LINK_REGEX)
+        self._next_page_link_pattern = re.compile(OlxListings.NEXT_PAGE_LINK_REGEX)
 
     def get_listing_urls_from_page(self):
         """
