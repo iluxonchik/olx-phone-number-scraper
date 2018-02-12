@@ -46,11 +46,13 @@ class Requestor(object):
 
         # conenct to olx in order to get the cookies, which will be sent on
         # subsequent requests
-        try:
-            self._session.get('https://olx.pt', timeout=self._TIMEOUT)
-        except Timeout:
-            print('[!!!] GET timeout')
-            pass
+        while True:
+            try:
+                self._session.get('https://olx.pt', timeout=self._TIMEOUT)
+            except Timeout:
+                print('[!!!] GET timeout | Retrying...')
+                continue
+            break
 
     def _update_session_if_needed(self):
         if self._CURR_SESSION_REQUESTS >= self._REQUESTS_PER_SESSION:
@@ -69,11 +71,15 @@ class Requestor(object):
             with open(url, mode='r') as f:
                 html = f.read()
         else:
-            try:
-                res = self._session.get(url, timeout=self._TIMEOUT)
-            except Timeout:
-                print('[!!!] GET timeout')
-                pass
+
+            while True:
+                try:
+                    res = self._session.get(url, timeout=self._TIMEOUT)
+                except Timeout:
+                    print('[!!!] GET timeout | Retrying...')
+                    continue
+                break
+
             html = res.text
             self._update_session_if_needed()
         return html

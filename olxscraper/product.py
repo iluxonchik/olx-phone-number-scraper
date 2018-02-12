@@ -15,6 +15,9 @@ class Product(object):
     PHONE_TOKEN_REGEX = r"var phoneToken = '(?P<phone_token>.+?)';"
     phone_token_pattern = re.compile(PHONE_TOKEN_REGEX)
 
+    MULTIPLE_PHONE_NUMBERS_REGEX = r'(?P<phone_number>\d+?)<\/span>'
+    multiple_phone_numbers_pattern = re.compile(MULTIPLE_PHONE_NUMBERS_REGEX)
+
     PHONE_NUMBER_URL_FORMAT = 'https://www.olx.pt/ajax/misc/contact/phone/{}/?pt={}'
 
     def __init__(self, content, url):
@@ -56,7 +59,23 @@ class Product(object):
 
     def get_phone_number(self, phone_number_url, referer_header):
         html = self._requestor.get_html_from_url(phone_number_url, referer_header)
-        response = json.loads(html)
+
+        try:
+            response = json.loads(html)
+        except json.decoder.JSONDecodeError:
+            # TODO: investigate the cause of this failure
+            error_msg = '{}:{}:{}'.format(phone_number_url, referer_header, html)
+            with open('errors.txt', mode='a') as errors_file:
+                errors_file.write(error_msg)
+            return '000000000'
+
         phone_number_raw = response['value']
         phone_number = phone_number_raw.replace(' ', '')
+
+        # if multiple phone numbers are returned, if yes, return first only
+        res = self.multiple_phone_numbers_pattern.search(phone_number)
+        if res is not None:
+            print('[!!!] Multiple phone numbres found, returning first only')
+            phone_number = res.group('phone_number')
+
         return phone_number

@@ -42,6 +42,11 @@ class OlxListings(object):
         match = self._next_page_link_pattern.search(self._html)
 
         if match is None:
+
+            # TODO: remove me; debugging
+            with open('last_page.txt', mode='a') as f:
+                f.write('self._html' + '\n'*15)
+
             return None
         else:
             return match.group('next_page_url')
