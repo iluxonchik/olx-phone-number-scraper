@@ -2,6 +2,7 @@
 
 import requests
 import random
+from requests.exceptions import Timeout
 from olxscraper.decorators import singleton
 
 @singleton
@@ -23,6 +24,7 @@ class Requestor(object):
     def __init__(self, requests_per_session = 85):
         self._REQUESTS_PER_SESSION = requests_per_session
         self._CURR_SESSION_REQUESTS = 0
+        self._TIMEOUT = 5
 
         print('Initting session...')
         self._init_session()
@@ -44,7 +46,11 @@ class Requestor(object):
 
         # conenct to olx in order to get the cookies, which will be sent on
         # subsequent requests
-        self._session.get('https://olx.pt')
+        try:
+            self._session.get('https://olx.pt', timeout=self._TIMEOUT)
+        except Timeout:
+            print('[!!!] GET timeout')
+            pass
 
     def _update_session_if_needed(self):
         if self._CURR_SESSION_REQUESTS >= self._REQUESTS_PER_SESSION:
@@ -63,7 +69,11 @@ class Requestor(object):
             with open(url, mode='r') as f:
                 html = f.read()
         else:
-            res = self._session.get(url)
+            try:
+                res = self._session.get(url, timeout=self._TIMEOUT)
+            except Timeout:
+                print('[!!!] GET timeout')
+                pass
             html = res.text
             self._update_session_if_needed()
         return html
