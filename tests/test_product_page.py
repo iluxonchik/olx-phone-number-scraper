@@ -17,7 +17,7 @@ class ProductPageTestCase(unittest.TestCase):
 
     def _setup_product(self, product_file_path, url):
         product = None
-        with open(product_file_path, mode='rb') as f:
+        with open(product_file_path, mode='r') as f:
             content = f.read()
             product = Product(content, url)
         return product

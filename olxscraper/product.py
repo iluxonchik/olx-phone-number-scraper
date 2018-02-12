@@ -1,16 +1,18 @@
 import re
+from olxscraper.utils import get_html_from_url
 from olxscraper.exceptions import (ListingIDNotFoundInURLException, PhoneTokenNotFoundException)
+import json
 
 
 class Product(object):
 
-    PN_PRESENT_REGEX = rb'contact-button link-phone'
+    PN_PRESENT_REGEX = r'contact-button link-phone'
     pn_present_pattern = re.compile(PN_PRESENT_REGEX)
 
     LISTING_ID_REGEX = r'ID(?P<listing_id>.+?)\.html'
     listing_id_pattern = re.compile(LISTING_ID_REGEX)
 
-    PHONE_TOKEN_REGEX = rb"var phoneToken = '(?P<phone_token>.+?)';"
+    PHONE_TOKEN_REGEX = r"var phoneToken = '(?P<phone_token>.+?)';"
     phone_token_pattern = re.compile(PHONE_TOKEN_REGEX)
 
     PHONE_NUMBER_URL_FORMAT = 'https://www.olx.pt/ajax/misc/contact/phone/{}/?pt={}'
@@ -48,4 +50,11 @@ class Product(object):
             raise PhoneTokenNotFoundException()
 
         phone_token = res.group('phone_token')
-        return phone_token.decode('utf-8')
+        return phone_token
+
+    def get_phone_number(self, phone_number_url, referer_header):
+        html = get_html_from_url(phone_number_url, referer_header)
+        response = json.loads(html)
+        phone_number_raw = response['value']
+        phone_number = phone_number_raw.replace(' ', '')
+        return phone_number
