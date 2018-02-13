@@ -45,7 +45,7 @@ class OlxListings(object):
 
             # TODO: remove me; debugging
             with open('last_page.txt', mode='a') as f:
-                f.write('self._html' + '\n'*15)
+                f.write(self._html + '\n'*15)
 
             return None
         else:

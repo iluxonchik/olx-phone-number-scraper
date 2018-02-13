@@ -64,7 +64,7 @@ class Product(object):
             response = json.loads(html)
         except json.decoder.JSONDecodeError:
             # TODO: investigate the cause of this failure
-            error_msg = '{}:{}:{}'.format(phone_number_url, referer_header, html)
+            error_msg = '{}:{}:{}\n\n\n\n\n'.format(phone_number_url, referer_header, html)
             with open('errors.txt', mode='a') as errors_file:
                 errors_file.write(error_msg)
             return '000000000'

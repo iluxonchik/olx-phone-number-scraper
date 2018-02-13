@@ -46,6 +46,7 @@ class Requestor(object):
 
         # conenct to olx in order to get the cookies, which will be sent on
         # subsequent requests
+        # NOTE: potential infinte loop
         while True:
             try:
                 self._session.get('https://olx.pt', timeout=self._TIMEOUT)
@@ -72,6 +73,7 @@ class Requestor(object):
                 html = f.read()
         else:
 
+            # NOTE: potential infinte loop
             while True:
                 try:
                     res = self._session.get(url, timeout=self._TIMEOUT)
