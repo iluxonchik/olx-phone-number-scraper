@@ -102,7 +102,7 @@ def print_stats():
     global ERR_351, ERR_CARRIER, ERR_CARRIER_LIST, ERR_LENGTH
     global ERR_LENGTH_LIST, PHONE_NUMS_WRITTEN, DUPLICATES
 
-    print('Total Numbers Written: {}\n---\n'.format(PHONE_NUMS_WRITTEN))
+    print('Total Numbers Written: {}\n---\n'.format(PHONE_NUMS_WRITTEN - DUPLICATES))
     print('351 Errors : {}'.format(ERR_351))
     print('Carrier Errors : {}'.format(ERR_CARRIER))
     print('Lenght Errors: {}'.format(ERR_LENGTH))
@@ -141,6 +141,7 @@ def run():
     with open(OUT_FILE_NAME, mode='w') as out_file:
         for phone_number in phone_numbers:
             out_file.write(phone_number + '\n')
+        out_file.truncate(out_file.tell() - 1)  # remove last '\n'
 
     print_stats()
 
