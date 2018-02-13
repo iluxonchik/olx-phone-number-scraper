@@ -15,7 +15,7 @@ NOTE: the code here is far from the best one. This has been written to
 quickly address a need. Major refactoring needed in the future.
 """
 
-import sys
+import sys, os
 
 # Not the most efficient way, specially if lists get too large.
 # For project-specific use case it's perfectly fine and no need to
@@ -141,7 +141,7 @@ def run():
     with open(OUT_FILE_NAME, mode='w') as out_file:
         for phone_number in phone_numbers:
             out_file.write(phone_number + '\n')
-        out_file.truncate(out_file.tell() - 1)  # remove last '\n'
+        out_file.truncate(out_file.tell() - len(os.linesep))  # remove last '\n'
 
     print_stats()
 
