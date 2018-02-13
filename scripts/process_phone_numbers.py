@@ -121,6 +121,7 @@ def run():
 
     if len(sys.argv) < 3:
         print('Usage: python {} <IN_FILE_NAME> <OUT_FILE_NAME>'.format(sys.argv[0]))
+        sys.exit(0)
 
     IN_FILE_NAME = sys.argv[1]
     OUT_FILE_NAME = sys.argv[2]
